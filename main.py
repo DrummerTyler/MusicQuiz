@@ -5,35 +5,96 @@ from PIL import Image, ImageTk
 class MainClass(object):
 
     #variables
-    login = False
+    logged_in = False
+
 
     #functions
     def play_click(self):
-        # window setup
-        gw = Tk()
-        gw.configure(background='#1F2833', height=700, width=1000)
+
+        if self.logged_in == False:
+            self.login_click()
+        elif self.logged_in == True:
+
+            # window setup
+            gw = Toplevel()
+            gw.configure(background='#1F2833', height=700, width=1000)
+            gw.resizable(0, 0)
+
+    def login(self):
+
+        supplied_username = self.username_txt.get()
+        supplied_password = self.password_txt.get()
+
+        with open('db.txt', 'r') as file:
+            for line in file:
+                username, password = line.split(',')
+                # Check the username against the one supplied
+                if username == supplied_username:
+                    if password == supplied_password:
+                        self.logged_in = True
+                        self.play_click()
+                    else:
+                        tg = Toplevel()
+                        tg.title('Try Again')
+                        tg.configure(background='red')
+                        tg.resizable(0, 0)
+
+                        label = Label(tg, text='Password Does Not Match Username', bg='red', fg='black', font='non 25 bold')
+                        label.pack()
+
+                        login = Button(tg, text='Try Again', bg='grey', fg='black', font='non 25 bold', command=self.login_click())
+                        login.pack()
+
+                else:
+                    tg = Toplevel()
+                    tg.title('Try Again')
+                    tg.configure(background='red')
+                    tg.resizable(0, 0)
+
+                    label = Label(tg, text='Username Does Not Exist', bg='red', fg='black', font='non 25 bold')
+                    label.pack()
+
+                    login = Button(tg, text='Try Again', bg='grey', fg='black', font='non 25 bold', command=self.login_click())
+                    login.pack()
+
 
     def register(self):
         username = self.username_txt.get()
         password = self.password_txt.get()
 
-        file = open('db.txt', 'a')
-        file.write(username)
-        file.write(',')
-        file.write(password)
-        file.write('\n')
-        file.close()
+        if username and password == '':
+            tg = Toplevel()
+            tg.title('Try Again')
+            tg.configure(background='red')
+            tg.resizable(0, 0)
 
-        suc = Tk()
-        suc.title('Account Created')
-        suc.configure(background='green2')
+            label = Label(tg, text='Please Complete All Fields', bg='red', fg='black', font='non 25 bold')
+            label.pack()
 
-        label = Label(suc, text='Account Created', bg='green2', fg='black', font='non 25 bold')
-        label.pack()
+            login = Button(tg, text='Try Again', bg='grey', fg='black', font='non 25 bold', command=self.register_click())
+            login.pack()
+        else:
+            file = open('db.txt', 'a')
+            file.write(username)
+            file.write(',')
+            file.write(password)
+            file.write('\n')
+            file.close()
+
+            suc = Toplevel()
+            suc.title('Account Created')
+            suc.configure(background='green2')
+            suc.resizable(0, 0)
+
+            label = Label(suc, text='Account Created', bg='green2', fg='black', font='non 25 bold')
+            label.pack()
+
+            login = Button(suc, text='Login', bg='grey', fg='black', font='non 25 bold', command=self.login_click)
+            login.pack()
 
     def register_click(self):
         # window setup
-        lw = Tk()
+        lw = Toplevel()
         lw.title('TylerR - Music Quiz - Register')
         lw.configure(background='#1F2833', height=700, width=1000)
         lw.resizable(0, 0)
@@ -77,7 +138,7 @@ class MainClass(object):
 
     def login_click(self):
         # window setup
-        lw = Tk()
+        lw = Toplevel()
         lw.title('TylerR - Music Quiz - Login')
         lw.configure(background='#1F2833', height=700, width=1000)
         lw.resizable(0, 0)
@@ -98,14 +159,14 @@ class MainClass(object):
         username = Label(lw, text='Username: ', bg='#1F2833', fg='white', font='none 25 bold')
         username.place(x=450, y=350)
 
-        username_txt = Entry(lw, bg='#C5C6C7', width=25)
-        username_txt.place(x=455, y=400)
+        usernametxt = Entry(lw, bg='#C5C6C7', width=25)
+        usernametxt.place(x=455, y=400)
 
         password = Label(lw, text='Password: ', bg='#1F2833', fg='white', font='none 25 bold')
         password.place(x=450, y=450)
 
-        password_txt = Entry(lw, bg='#C5C6C7', width=25)
-        password_txt.place(x=455, y=500)
+        passwordtxt = Entry(lw, bg='#C5C6C7', width=25)
+        passwordtxt.place(x=455, y=500)
 
         login_button = Button(lw, image=render_login_button, bg='#1F2833', borderwidth=10, command=self.login)
         login_button.image = render_login_button
